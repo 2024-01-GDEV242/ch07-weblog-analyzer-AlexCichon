@@ -9,19 +9,38 @@ public class LogAnalyzer
     // Where to calculate the hourly access counts.
     private int[] hourCounts;
     // Use a LogfileReader to access the data.
-    private LogfileReader reader;
-
+    private LogfileReader reader; 
+    //where to calculate the weeky access counts
+    private int[] dailyCounts;
+    //where to calculate the weeky access counts
+    private int[] weeklyCounts;
     /**
      * Create an object to analyze hourly web accesses.
      */
-    public LogAnalyzer()
+    public LogAnalyzer(String name) 
     { 
         // Create the array object to hold the hourly
         // access counts.
         hourCounts = new int[24];
+        dailyCounts = new int[366];
         // Create the reader to obtain the data.
-        reader = new LogfileReader("demo.log");
+        reader = new LogfileReader(name);
+        weeklyCounts = new int[7];
     }
+    
+    public class Main {
+        public static void main(String[] args) {
+            LogfileCreator creator = new LogfileCreator();
+            creator.createFile("entries.txt", 8);
+
+            LogAnalyzer analyzer = new LogAnalyzer("entries.txt");
+            analyzer.analyzeHourlyData();
+            analyzer.printHourlyCounts();
+            System.out.println(analyzer.numberOfAccesses());
+
+        }
+    }
+    
 
     /**
      * Analyze the hourly access data from the log file.
@@ -48,6 +67,41 @@ public class LogAnalyzer
         }
     }
     
+     public int busiestHour() {
+        int maxCount = 0;
+        int busiestHour = 0;
+        for(int i = 0; i < hourCounts.length; i++)
+            if(hourCounts[i] > maxCount) {
+                busiestHour = i; 
+                maxCount = hourCounts[i];
+            }
+        return busiestHour;
+    }
+    
+      public int quietestHour() {
+        int minCount = numberOfAccesses();
+        int quietestHour = 0;
+        for(int i = 0; i < hourCounts.length; i++)
+            if(hourCounts[i] < minCount) {
+                quietestHour = i;
+                minCount = hourCounts[i];
+            }
+        return quietestHour;
+    }
+
+     public int busiestTwoHours() {
+        int maxCount = 0;
+        int firstOfBusiestHourPair = 0;
+        for(int i = 0; i < hourCounts.length/2; i++) {
+            int hourPair = hourCounts[i * 2] + hourCounts[i * 2 + 1];
+            if (hourPair > maxCount) {
+                firstOfBusiestHourPair = i;
+            }
+        }
+        return firstOfBusiestHourPair;
+    }
+    
+    
     /**
      * Print the lines of data read by the LogfileReader
      */
@@ -55,4 +109,10 @@ public class LogAnalyzer
     {
         reader.printData();
     }
-}
+    
+    public void numberOfAccesses()
+    {
+    }
+    }
+   
+    
